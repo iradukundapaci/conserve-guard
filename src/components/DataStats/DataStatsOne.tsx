@@ -24,8 +24,8 @@ const dataStatsList = [
       </svg>
     ),
     color: "#3FD97F",
-    title: "Total Views",
-    value: "3.456K",
+    title: "Tourists",
+    value: "3k",
     growthRate: 0.43,
   },
   {
@@ -46,8 +46,8 @@ const dataStatsList = [
       </svg>
     ),
     color: "#FF9C55",
-    title: "Total Profit",
-    value: "$42.2K",
+    title: "Poachers",
+    value: "100",
     growthRate: 4.35,
   },
   {
@@ -74,8 +74,8 @@ const dataStatsList = [
       </svg>
     ),
     color: "#8155FF",
-    title: "Total Product",
-    value: "2.450",
+    title: "Rangers",
+    value: "100",
     growthRate: 2.59,
   },
   {
@@ -112,8 +112,8 @@ const dataStatsList = [
       </svg>
     ),
     color: "#18BFFF",
-    title: "Total Users",
-    value: "3.465",
+    title: "Total Incidents",
+    value: "3",
     growthRate: -0.95,
   },
 ];

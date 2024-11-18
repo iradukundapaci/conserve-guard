@@ -6,12 +6,12 @@ import DefaultSelectOption from "@/components/SelectOption/DefaultSelectOption";
 const ChartTwo: React.FC = () => {
   const series = [
     {
-      name: "Sales",
-      data: [44, 55, 41, 67, 22, 43, 65],
+      name: "Resolved cases",
+      data: [0, 20, 35, 45, 35, 55, 65, 50, 65, 75, 60, 75],
     },
     {
-      name: "Revenue",
-      data: [13, 23, 20, 8, 13, 27, 15],
+      name: "Unresolved cases",
+      data: [15, 9, 17, 32, 25, 68, 80, 68, 84, 94, 74, 62],
     },
   ];
 
@@ -71,7 +71,20 @@ const ChartTwo: React.FC = () => {
     },
 
     xaxis: {
-      categories: ["M", "T", "W", "T", "F", "S", "S"],
+      categories: [
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+      ],
     },
     legend: {
       position: "top",
@@ -98,7 +111,7 @@ const ChartTwo: React.FC = () => {
       <div className="mb-4 justify-between gap-4 sm:flex">
         <div>
           <h4 className="text-body-2xlg font-bold text-dark dark:text-white">
-            Profit this week
+            Poaching Cases
           </h4>
         </div>
         <div>

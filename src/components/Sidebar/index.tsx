@@ -45,9 +45,13 @@ const menuGroups = [
           </svg>
         ),
         label: "Location",
-        route: "/location",
+        route: "#",
+        children: [
+          { label: "Animals", route: "/animals" },
+          { label: "Guards", route: "/guards" },
+          { label: "Intruders", route: "/intruders" },
+        ],
       },
-      // "Users" menu item with icon path
       {
         icon: (
           <svg
@@ -60,7 +64,12 @@ const menuGroups = [
           </svg>
         ),
         label: "Users",
-        route: "/users",
+        route: "#",
+        children: [
+          { label: "Admins", route: "/admins" },
+          { label: "Rangers", route: "/rangers" },
+          { label: "Tourists ", route: "/tourists" },
+        ],
       },
       // "Poachers" menu item with icon path
       {
@@ -107,7 +116,20 @@ const menuGroups = [
         label: "Surveillance",
         route: "/surveillance",
       },
-      // "Tables" item with submenu
+      {
+        icon: (
+          <svg
+            className="fill-current"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+          >
+            <path d="M12 3C6.48 3 2 6.58 2 11c0 1.85.75 3.55 2 4.93V21l4.07-2.4C9.44 19.3 10.7 19.5 12 19.5c5.52 0 10-3.58 10-8.5S17.52 3 12 3zm0 14c-1.12 0-2.18-.18-3.16-.5L5.5 17.5V15.3c-1.06-1.16-1.7-2.58-1.7-4.3C3.8 7.58 7.22 5 12 5s8.2 2.58 8.2 6c0 3.42-3.42 6-8.2 6z" />
+          </svg>
+        ),
+        label: "Chat",
+        route: "/chat",
+      },
       {
         icon: (
           <svg
