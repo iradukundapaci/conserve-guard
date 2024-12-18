@@ -8,7 +8,7 @@ export interface Config {
 
 export const config: Config = {
   site: {
-    name: "Devias Kit",
+    name: "Conserve Guard",
     description: "",
     themeColor: "#090a0b",
     url: getSiteURL(),

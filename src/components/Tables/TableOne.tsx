@@ -2,7 +2,7 @@ import Image from "next/image";
 
 const poachingCases = [
   {
-    image: "/images/poachers/poacher-01.jpg",
+    image: "",
     name: "John Doe",
     location: "Serengeti",
     date: "2024-10-15",
@@ -10,7 +10,7 @@ const poachingCases = [
     status: "Arrested",
   },
   {
-    image: "/images/poachers/poacher-02.jpg",
+    image: "",
     name: "Jane Smith",
     location: "Kruger Park",
     date: "2024-10-12",
@@ -18,7 +18,7 @@ const poachingCases = [
     status: "Under Investigation",
   },
   {
-    image: "/images/poachers/poacher-03.jpg",
+    image: "",
     name: "Mike Johnson",
     location: "Masai Mara",
     date: "2024-10-10",

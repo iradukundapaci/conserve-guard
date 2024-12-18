@@ -1,18 +1,18 @@
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import UsersClient from "@/components/Users/UsersClient";
+import CalendarBox from "@/components/CalenderBox";
 
 export const metadata: Metadata = {
   title: "Conserve Guard",
-  description: "List of rangers",
+  description: "Ranger Schedules",
 };
 
-export default function RangersPage() {
+export default function SchedulePage() {
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Ranger" />
-      <UsersClient role="RANGER" />
+      <Breadcrumb pageName="Schedule" />
+      <CalendarBox />
     </DefaultLayout>
   );
 }

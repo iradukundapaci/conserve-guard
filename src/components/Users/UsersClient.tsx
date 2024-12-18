@@ -12,6 +12,10 @@ import {
   TextField,
   Snackbar,
   Alert,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -19,20 +23,22 @@ import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import { DataTable } from "../Tables/Datatable";
 
+export enum UserRole {
+  ADMIN = "ADMIN",
+  SENIOR_RANGER = "SENIOR_RANGER",
+  RANGER = "RANGER",
+  POACHER = "POACHER",
+}
+
 type User = {
   id: number;
   email: string;
   names: string;
-  role: string;
-  profileImage: string | null;
-  password: string;
+  role: UserRole;
+  password?: string;
 };
 
-type PageProps = {
-  role: string;
-};
-
-export default function UsersPage({ role }: PageProps) {
+export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [totalUsers, setTotalUsers] = useState<number>(0);
   const [page, setPage] = useState<number>(0);
@@ -44,9 +50,7 @@ export default function UsersPage({ role }: PageProps) {
     id: 0,
     email: "",
     names: "",
-    role: role,
-    profileImage: null,
-    password: "",
+    role: UserRole.RANGER, // Default role
   });
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -58,20 +62,7 @@ export default function UsersPage({ role }: PageProps) {
   const columns = [
     { key: "names", label: "Name", render: (row: User) => row.names },
     { key: "email", label: "Email" },
-    {
-      key: "profileImage",
-      label: "Profile Image",
-      render: (row: User) =>
-        row.profileImage ? (
-          <img
-            src={row.profileImage}
-            alt={`${row.names}'s profile`}
-            style={{ width: 40, height: 40, borderRadius: "50%" }}
-          />
-        ) : (
-          "No Image"
-        ),
-    },
+    { key: "role", label: "Role" },
     {
       key: "actions",
       label: "Actions",
@@ -90,34 +81,33 @@ export default function UsersPage({ role }: PageProps) {
 
   const getToken = () => localStorage.getItem("accessToken") || "";
 
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/api/v1/users", {
+        params: { page: page + 1, size: rowsPerPage },
+        headers: {
+          accept: "application/json",
+        },
+      });
+
+      const { items, meta } = response.data.payload;
+      const allUsers = items.map((user: any) => ({
+        id: user.id,
+        email: user.email,
+        names: user.profile.names,
+        role: user.role,
+      }));
+
+      setUsers(allUsers);
+      setTotalUsers(meta.totalItems);
+    } catch (error) {
+      console.error("Failed to fetch users", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get("http://localhost:8000/api/v1/users", {
-          params: { role, page: page + 1, size: rowsPerPage },
-          headers: {
-            accept: "application/json",
-          },
-        });
-
-        const { items, meta } = response.data.payload;
-        const allUsers = items.map((user: any) => ({
-          id: user.id,
-          email: user.email,
-          names: user.profile.names,
-          role: user.profile.role,
-          profileImage: user.profile.profileImage,
-        }));
-
-        setUsers(allUsers);
-        setTotalUsers(meta.totalItems);
-      } catch (error) {
-        console.error("Failed to fetch users", error);
-      }
-    };
-
     fetchUsers();
-  }, [page, rowsPerPage, role]);
+  }, [page, rowsPerPage]);
 
   const handlePageChange = (_: unknown, newPage: number) => setPage(newPage);
 
@@ -135,9 +125,7 @@ export default function UsersPage({ role }: PageProps) {
       id: 0,
       email: "",
       names: "",
-      role,
-      profileImage: null,
-      password: "",
+      role: UserRole.RANGER,
     });
   };
 
@@ -147,9 +135,7 @@ export default function UsersPage({ role }: PageProps) {
       id: 0,
       email: "",
       names: "",
-      role,
-      profileImage: null,
-      password: "",
+      role: UserRole.RANGER,
     });
   };
 
@@ -158,6 +144,13 @@ export default function UsersPage({ role }: PageProps) {
     setNewUser((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  const handleRoleChange = (e: any) => {
+    setNewUser((prev) => ({
+      ...prev,
+      role: e.target.value,
     }));
   };
 
@@ -172,13 +165,20 @@ export default function UsersPage({ role }: PageProps) {
       setSnackbarMessage("User created successfully!");
       setSnackbarOpen(true);
       handleCloseModal();
+      fetchUsers(); // Refetch users after creation
     } catch (error) {
       console.error("Failed to create user", error);
     }
   };
 
   const handleEditUser = (user: User) => {
-    setNewUser(user);
+    // Only set name and role for editing
+    setNewUser({
+      id: user.id,
+      email: user.email,
+      names: user.names,
+      role: user.role,
+    });
     setIsEditMode(true);
     setModalOpen(true);
   };
@@ -187,7 +187,10 @@ export default function UsersPage({ role }: PageProps) {
     try {
       await axios.patch(
         `http://localhost:8000/api/v1/users/${newUser.id}`,
-        newUser,
+        {
+          names: newUser.names,
+          role: newUser.role,
+        },
         {
           headers: {
             "Content-Type": "application/json",
@@ -198,6 +201,7 @@ export default function UsersPage({ role }: PageProps) {
       setSnackbarMessage("User updated successfully!");
       setSnackbarOpen(true);
       handleCloseModal();
+      fetchUsers();
     } catch (error) {
       console.error("Failed to update user", error);
     }
@@ -222,6 +226,7 @@ export default function UsersPage({ role }: PageProps) {
       setSnackbarOpen(true);
       setDeleteDialogOpen(false);
       setUserToDelete(null);
+      fetchUsers();
     } catch (error) {
       console.error("Failed to delete user", error);
     }
@@ -241,7 +246,7 @@ export default function UsersPage({ role }: PageProps) {
           variant="contained"
           onClick={handleOpenModal}
         >
-          Add {role}
+          Add User
         </Button>
       </Stack>
 
@@ -254,19 +259,30 @@ export default function UsersPage({ role }: PageProps) {
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleRowsPerPageChange}
       />
-
-      {/* Create/Edit User Modal */}
       <Dialog open={modalOpen} onClose={handleCloseModal}>
         <DialogTitle>{isEditMode ? "Edit User" : "Create User"}</DialogTitle>
         <DialogContent>
-          <TextField
-            name="email"
-            label="Email"
-            fullWidth
-            margin="dense"
-            value={newUser.email}
-            onChange={handleInputChange}
-          />
+          {!isEditMode && (
+            <>
+              <TextField
+                name="email"
+                label="Email"
+                fullWidth
+                margin="dense"
+                value={newUser.email}
+                onChange={handleInputChange}
+              />
+              <TextField
+                name="password"
+                label="Password"
+                type="password"
+                fullWidth
+                margin="dense"
+                value={newUser.password || ""}
+                onChange={handleInputChange}
+              />
+            </>
+          )}
           <TextField
             name="names"
             label="Name"
@@ -275,14 +291,20 @@ export default function UsersPage({ role }: PageProps) {
             value={newUser.names}
             onChange={handleInputChange}
           />
-          <TextField
-            name="profileImage"
-            label="Profile Image URL"
-            fullWidth
-            margin="dense"
-            value={newUser.profileImage || ""}
-            onChange={handleInputChange}
-          />
+          <FormControl fullWidth margin="dense">
+            <InputLabel>Role</InputLabel>
+            <Select
+              value={newUser.role}
+              label="Role"
+              onChange={handleRoleChange}
+            >
+              {Object.values(UserRole).map((role) => (
+                <MenuItem key={role} value={role}>
+                  {role.replace(/_/g, " ")}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseModal}>Cancel</Button>
@@ -295,7 +317,6 @@ export default function UsersPage({ role }: PageProps) {
         </DialogActions>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
       <Dialog
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
@@ -311,8 +332,6 @@ export default function UsersPage({ role }: PageProps) {
           </Button>
         </DialogActions>
       </Dialog>
-
-      {/* Snackbar */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}

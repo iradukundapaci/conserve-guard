@@ -3,7 +3,6 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import SidebarItem from "@/components/Sidebar/SidebarItem";
 import ClickOutside from "@/components/ClickOutside";
 import useLocalStorage from "@/hooks/useLocalStorage";
@@ -17,7 +16,6 @@ const menuGroups = [
   {
     name: "MAIN MENU",
     menuItems: [
-      // "Dashboard" menu item with icon path
       {
         icon: (
           <svg
@@ -32,7 +30,6 @@ const menuGroups = [
         label: "Dashboard",
         route: "/",
       },
-      // "Location" menu item with icon path
       {
         icon: (
           <svg
@@ -46,11 +43,6 @@ const menuGroups = [
         ),
         label: "Location",
         route: "#",
-        children: [
-          { label: "Animals", route: "/animals" },
-          { label: "Guards", route: "/guards" },
-          { label: "Intruders", route: "/intruders" },
-        ],
       },
       {
         icon: (
@@ -64,14 +56,8 @@ const menuGroups = [
           </svg>
         ),
         label: "Users",
-        route: "#",
-        children: [
-          { label: "Admins", route: "/admins" },
-          { label: "Rangers", route: "/rangers" },
-          { label: "Tourists ", route: "/tourists" },
-        ],
+        route: "/users",
       },
-      // "Poachers" menu item with icon path
       {
         icon: (
           <svg
@@ -80,28 +66,12 @@ const menuGroups = [
             height="24"
             viewBox="0 0 24 24"
           >
-            <path d="M20.84 4.61l-1.8-1.8a2.29 2.29 0 00-3.2 0L13.05 6.6a5.5 5.5 0 00-7.34 8.01l4.13 4.13a5.5 5.5 0 008.02-7.34l2.14-2.14a2.29 2.29 0 000-3.2z" />
+            <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm-7-9c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 2v3.5l2.25 1.35.75-1.3-1.75-1V13h-1z" />
           </svg>
         ),
-        label: "Poachers",
-        route: "/poachers",
+        label: "Schedule",
+        route: "/schedule",
       },
-      // "Lawyers" menu item with icon path
-      {
-        icon: (
-          <svg
-            className="fill-current"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-          >
-            <path d="M12 2l4 4h-3v9h-2V6H8l4-4zm-6 8v10h12V10H6zm2 8v-6h8v6H8z" />
-          </svg>
-        ),
-        label: "Lawyers",
-        route: "/lawyers",
-      },
-      // "Surveillance" menu item with icon path
       {
         icon: (
           <svg
@@ -129,21 +99,6 @@ const menuGroups = [
         ),
         label: "Chat",
         route: "/chat",
-      },
-      {
-        icon: (
-          <svg
-            className="fill-current"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-          >
-            <path d="M3 3v18h18V3H3zm8 16H5v-6h6v6zm0-8H5V5h6v6zm8 8h-6v-6h6v6zm0-8h-6V5h6v6z" />
-          </svg>
-        ),
-        label: "Tables",
-        route: "#",
-        children: [{ label: "Tables", route: "/tables" }],
       },
     ],
   },

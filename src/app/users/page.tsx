@@ -5,14 +5,14 @@ import UsersClient from "@/components/Users/UsersClient";
 
 export const metadata: Metadata = {
   title: "Conserve Guard",
-  description: "List of admins",
+  description: "List of Users",
 };
 
 export default function AdminPage() {
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Admin" />
-      <UsersClient role="ADMIN" />
+      <Breadcrumb pageName="Users" />
+      <UsersClient />
     </DefaultLayout>
   );
 }
