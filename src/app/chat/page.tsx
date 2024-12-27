@@ -22,10 +22,10 @@ import DefaultLayout from "@/components/Layouts/DefaultLaout";
 
 interface Message {
   id?: string;
-  createdAt: string; // Use createdAt instead of timestamp
-  message: string; // Change content to message
-  sender: { id: string }; // Structure of sender
-  receiver: { id: string }; // Structure of receiver
+  createdAt: string;
+  message: string;
+  sender: { id: string };
+  receiver: { id: string };
 }
 
 interface Contact {
@@ -110,7 +110,7 @@ export default function Page(): React.JSX.Element {
             ...prev,
             contacts: response.data.payload.items.map((user: any) => ({
               id: user.id,
-              names: `${user.profile.names}`, // Ensure the user.profile.names exists
+              names: `${user.names}`,
             })),
             loading: false,
           }));

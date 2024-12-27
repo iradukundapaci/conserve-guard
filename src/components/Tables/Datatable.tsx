@@ -106,7 +106,7 @@ export function DataTable({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} align="center">
-                  No users found.
+                  No Data found.
                 </TableCell>
               </TableRow>
             )}

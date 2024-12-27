@@ -1,18 +1,18 @@
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import UsersClient from "@/components/Users/UsersClient";
+import AssignUsersToGroups from "@/components/groups/asignment";
 
 export const metadata: Metadata = {
   title: "Conserve Guard",
-  description: "List of tourists",
+  description: "List of Groups Assignment",
 };
 
-export default function TouristsPage() {
+export default function GroupsAssignmentPage() {
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Tourist" />
-      <UsersClient role="TOURIST" />
+      <Breadcrumb pageName="Groups Assignment" />
+      <AssignUsersToGroups />
     </DefaultLayout>
   );
 }

@@ -27,7 +27,6 @@ export enum UserRole {
   ADMIN = "ADMIN",
   SENIOR_RANGER = "SENIOR_RANGER",
   RANGER = "RANGER",
-  POACHER = "POACHER",
 }
 
 type User = {
@@ -94,7 +93,7 @@ export default function UsersPage() {
       const allUsers = items.map((user: any) => ({
         id: user.id,
         email: user.email,
-        names: user.profile.names,
+        names: user.names,
         role: user.role,
       }));
 
