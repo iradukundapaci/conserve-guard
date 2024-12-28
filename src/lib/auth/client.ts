@@ -38,7 +38,7 @@ export interface ResetPasswordParams {
 }
 
 class AuthClient {
-  async signUp(values: SignUpParams) {
+  async signUp(values: SignUpParams): Promise<{ error?: string }> {
     try {
       const response = await fetch("http://localhost:8000/api/v1/auth/signup", {
         method: "POST",
@@ -58,11 +58,9 @@ class AuthClient {
       if (response.status === 201) {
         return { error: data.message || "Signup failed" };
       }
-
-      // // Redirect to login page
       window.location.href = "/auth/signin";
+      return { error: undefined };
     } catch (error) {
-      // Handle any errors during the fetch
       return { error: "An error occurred during login. Please try again." };
     }
   }

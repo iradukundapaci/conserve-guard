@@ -4,17 +4,24 @@ import React, { useRef, useEffect, useState } from "react";
 import * as tf from "@tensorflow/tfjs";
 import * as cocossd from "@tensorflow-models/coco-ssd";
 
-const ObjectDetection = () => {
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
-  const [model, setModel] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [isVideoReady, setIsVideoReady] = useState(false);
+// Define types for the model predictions
+interface Detection {
+  bbox: [number, number, number, number];
+  class: string;
+  score: number;
+}
+
+const ObjectDetection: React.FC = () => {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [model, setModel] = useState<cocossd.ObjectDetection | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isVideoReady, setIsVideoReady] = useState<boolean>(false);
 
   // Initialize the model
   useEffect(() => {
-    const loadModel = async () => {
+    const loadModel = async (): Promise<void> => {
       try {
         await tf.setBackend("webgl");
         console.log("Loading coco-ssd model...");
@@ -33,7 +40,7 @@ const ObjectDetection = () => {
 
   // Set up video stream
   useEffect(() => {
-    const setupCamera = async () => {
+    const setupCamera = async (): Promise<void> => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: {
@@ -53,7 +60,9 @@ const ObjectDetection = () => {
         }
       } catch (err) {
         console.error("Camera error:", err);
-        setError(`Camera access error: ${err.message}`);
+        setError(
+          `Camera access error: ${err instanceof Error ? err.message : String(err)}`,
+        );
       }
     };
 
@@ -61,7 +70,7 @@ const ObjectDetection = () => {
 
     // Cleanup function
     return () => {
-      const stream = videoRef.current?.srcObject;
+      const stream = videoRef.current?.srcObject as MediaStream | null;
       if (stream) {
         const tracks = stream.getTracks();
         tracks.forEach((track) => track.stop());
@@ -73,12 +82,13 @@ const ObjectDetection = () => {
   useEffect(() => {
     if (!model || !videoRef.current || !isVideoReady) return;
 
-    const detectObjects = async () => {
+    const detectObjects = async (): Promise<void> => {
       const video = videoRef.current;
       const canvas = canvasRef.current;
 
-      if (!canvas) return;
+      if (!canvas || !video) return;
       const ctx = canvas.getContext("2d");
+      if (!ctx) return;
 
       // Set canvas dimensions to match video
       if (video.videoWidth && video.videoHeight) {
@@ -96,7 +106,7 @@ const ObjectDetection = () => {
           const predictions = await model.detect(video);
 
           // Draw predictions
-          predictions.forEach((prediction) => {
+          predictions.forEach((prediction: Detection) => {
             if (
               [
                 "person",

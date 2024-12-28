@@ -3,6 +3,22 @@
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+
+interface Animal {
+  id: number;
+  names: string;
+  species: string;
+  latitude: number;
+  longitude: number;
+}
+
+interface ApiResponse {
+  payload: {
+    items: Animal[];
+  };
+  message?: string;
+}
 
 // Dynamically import MapContainer to avoid SSR issues
 const MapContainer = dynamic(
@@ -30,7 +46,7 @@ const Tooltip = dynamic(
   { ssr: false },
 );
 
-const createCustomIcon = (color = "#2563eb") => {
+const createCustomIcon = (color = "#2563eb"): L.DivIcon => {
   const svgTemplate = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -48,51 +64,48 @@ const createCustomIcon = (color = "#2563eb") => {
   });
 };
 
-const AnimalMap = () => {
-  const [animals, setAnimals] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [mapReady, setMapReady] = useState(false);
+const AnimalMap: React.FC = () => {
+  const [animals, setAnimals] = useState<Animal[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [mapReady, setMapReady] = useState<boolean>(false);
 
   const API_BASE_URL = "http://localhost:8000/api/v1/animals";
 
   useEffect(() => {
-    // Import Leaflet CSS and set up custom icon styles
-    import("leaflet/dist/leaflet.css").then(() => {
-      // Add custom styles for the pin icon and tooltip
-      const style = document.createElement("style");
-      style.textContent = `
-        .custom-pin-icon {
-          background: none;
-          border: none;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .custom-tooltip {
-          background: white;
-          border: none;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-          padding: 8px;
-          border-radius: 4px;
-          font-size: 14px;
-        }
-        .custom-tooltip::before {
-          display: none;
-        }
-      `;
-      document.head.appendChild(style);
-    });
+    // Add custom styles for the pin icon and tooltip
+    const style = document.createElement("style");
+    style.textContent = `
+      .custom-pin-icon {
+        background: none;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .custom-tooltip {
+        background: white;
+        border: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 8px;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      .custom-tooltip::before {
+        display: none;
+      }
+    `;
+    document.head.appendChild(style);
     setMapReady(true);
     fetchAnimals();
   }, []);
 
-  const fetchAnimals = async (page = 1, size = 10) => {
+  const fetchAnimals = async (page = 1, size = 10): Promise<void> => {
     setLoading(true);
     setError(null);
     try {
       const response = await fetch(`${API_BASE_URL}?page=${page}&size=${size}`);
-      const data = await response.json();
+      const data: ApiResponse = await response.json();
       if (response.ok) {
         setAnimals(data.payload.items);
       } else {
@@ -105,7 +118,7 @@ const AnimalMap = () => {
     }
   };
 
-  const createAnimal = async (newAnimal) => {
+  const createAnimal = async (newAnimal: Omit<Animal, "id">): Promise<void> => {
     try {
       const response = await fetch(API_BASE_URL, {
         method: "POST",
@@ -114,7 +127,7 @@ const AnimalMap = () => {
         },
         body: JSON.stringify(newAnimal),
       });
-      const data = await response.json();
+      const data: ApiResponse = await response.json();
       if (response.ok) {
         fetchAnimals();
       } else {
@@ -125,7 +138,7 @@ const AnimalMap = () => {
     }
   };
 
-  const deleteAnimal = async (id) => {
+  const deleteAnimal = async (id: number): Promise<void> => {
     try {
       const response = await fetch(`${API_BASE_URL}/${id}`, {
         method: "DELETE",
@@ -140,17 +153,17 @@ const AnimalMap = () => {
     }
   };
 
-  const handleFormSubmit = (event) => {
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
-    const formData = new FormData(event.target);
+    const formData = new FormData(event.currentTarget);
     const animal = {
-      names: formData.get("names"),
-      species: formData.get("species"),
-      latitude: parseFloat(formData.get("latitude")),
-      longitude: parseFloat(formData.get("longitude")),
+      names: formData.get("names") as string,
+      species: formData.get("species") as string,
+      latitude: parseFloat(formData.get("latitude") as string),
+      longitude: parseFloat(formData.get("longitude") as string),
     };
     createAnimal(animal);
-    event.target.reset();
+    event.currentTarget.reset();
   };
 
   const customIcon = createCustomIcon();

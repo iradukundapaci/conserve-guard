@@ -2,23 +2,46 @@
 
 import React, { useState, useEffect } from "react";
 
-const CalendarBox = () => {
-  const [schedules, setSchedules] = useState([]);
-  const [groups, setGroups] = useState([]);
-  const [formData, setFormData] = useState({
+interface Group {
+  id: number;
+  name: string;
+  rangersCount: number;
+}
+
+interface Schedule {
+  id: number;
+  groupId: number;
+  weekDay: string;
+  dutyStart: string;
+  dutyEnd: string;
+  task: string;
+  group: Group;
+}
+
+interface FormData {
+  groupId: string;
+  weekDay: string;
+  dutyStart: string;
+  dutyEnd: string;
+  task: string;
+}
+
+const CalendarBox: React.FC = () => {
+  const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [formData, setFormData] = useState<FormData>({
     groupId: "",
     weekDay: "",
     dutyStart: "",
     dutyEnd: "",
     task: "",
   });
-  const [isEditing, setIsEditing] = useState(false);
-  const [editId, setEditId] = useState(null);
-  const [error, setError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [editId, setEditId] = useState<number | null>(null);
+  const [error, setError] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // Fetch groups from the backend
-  const fetchGroups = async () => {
+  const fetchGroups = async (): Promise<void> => {
     try {
       const response = await fetch(
         "http://localhost:8000/api/v1/groups?page=1&size=10",
@@ -34,8 +57,7 @@ const CalendarBox = () => {
     }
   };
 
-  // Fetch schedules from the backend
-  const fetchSchedules = async () => {
+  const fetchSchedules = async (): Promise<void> => {
     try {
       const response = await fetch(
         "http://localhost:8000/api/v1/schedule?page=1&size=10",
@@ -56,14 +78,12 @@ const CalendarBox = () => {
     fetchSchedules();
   }, []);
 
-  const validateForm = () => {
-    // Validate groupId
+  const validateForm = (): boolean => {
     if (!formData.groupId) {
       setError("Please select a group");
       return false;
     }
 
-    // Validate time format and range
     const startTime = new Date(`1970-01-01T${formData.dutyStart}`);
     const endTime = new Date(`1970-01-01T${formData.dutyEnd}`);
     if (endTime <= startTime) {
@@ -71,13 +91,11 @@ const CalendarBox = () => {
       return false;
     }
 
-    // Validate task
     if (formData.task.trim().length === 0) {
       setError("Task description is required");
       return false;
     }
 
-    // Validate weekDay
     if (!formData.weekDay) {
       setError("Please select a weekday");
       return false;
@@ -88,13 +106,13 @@ const CalendarBox = () => {
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
+  ): void => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    setError(""); // Clear error when user makes changes
+    setError("");
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     setError("");
 
@@ -138,14 +156,13 @@ const CalendarBox = () => {
       setEditId(null);
       await fetchSchedules();
     } catch (error) {
-      setError(error.message || "Failed to save schedule");
-      console.error("Error saving schedule:", error);
+      setError("Failed to save schedule");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: number): Promise<void> => {
     if (!window.confirm("Are you sure you want to delete this schedule?")) {
       return;
     }
@@ -169,7 +186,7 @@ const CalendarBox = () => {
     }
   };
 
-  const handleEdit = (schedule: any) => {
+  const handleEdit = (schedule: Schedule): void => {
     setFormData({
       groupId: schedule.group.id.toString(),
       weekDay: schedule.weekDay,
@@ -179,7 +196,7 @@ const CalendarBox = () => {
     });
     setIsEditing(true);
     setEditId(schedule.id);
-    setError(""); // Clear any existing errors
+    setError("");
   };
 
   const daysOfWeek = [
@@ -190,7 +207,7 @@ const CalendarBox = () => {
     "Thursday",
     "Friday",
     "Saturday",
-  ];
+  ] as const;
 
   return (
     <div className="w-full max-w-full rounded-lg bg-white p-6 shadow-lg dark:bg-gray-dark">

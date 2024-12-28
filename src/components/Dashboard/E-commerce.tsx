@@ -13,12 +13,37 @@ import {
 } from "recharts";
 import { AlertCircle, Users, UserCheck, Calendar } from "lucide-react";
 
-const ECommerce = () => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+interface IncidentDataPoint {
+  date: string;
+  count: number;
+}
+
+interface GroupSize {
+  groupId: number;
+  size: number;
+}
+
+interface AnalyticsData {
+  totalUsers: number;
+  assignedUsers: number;
+  totalGroups: number;
+  totalIncidents: number;
+  incidentsOverTime: IncidentDataPoint[];
+  shiftsPerDay: Record<string, number>;
+  groupSizes: GroupSize[];
+}
+
+interface ShiftChartDataPoint {
+  day: string;
+  shifts: number;
+}
+
+const ECommerce: React.FC = () => {
+  const [data, setData] = useState<AnalyticsData | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (): Promise<void> => {
       try {
         const response = await fetch("http://localhost:8000/api/v1/analytics");
         const result = await response.json();
@@ -50,15 +75,15 @@ const ECommerce = () => {
   }
 
   // Transform incidents over time data for the line chart
-  const incidentsChartData = data.incidentsOverTime || [];
+  const incidentsChartData: IncidentDataPoint[] = data.incidentsOverTime || [];
 
   // Transform shifts per day data for the bar chart
-  const shiftsChartData = Object.entries(data.shiftsPerDay || {}).map(
-    ([day, count]) => ({
-      day,
-      shifts: count,
-    }),
-  );
+  const shiftsChartData: ShiftChartDataPoint[] = Object.entries(
+    data.shiftsPerDay || {},
+  ).map(([day, count]) => ({
+    day,
+    shifts: count,
+  }));
 
   return (
     <div className="p-4">

@@ -89,6 +89,7 @@ export default function GroupsTable() {
 
   useEffect(() => {
     fetchGroups();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, rowsPerPage]);
 
   const handlePageChange = (_: unknown, newPage: number) => setPage(newPage);

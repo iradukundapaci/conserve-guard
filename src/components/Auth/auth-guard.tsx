@@ -63,7 +63,7 @@ export function AuthGuard({
   if (error) {
     return (
       <Alert severity="error">
-        {error.message || "An error occurred while authenticating."}
+        {error || "An error occurred while authenticating."}
       </Alert>
     );
   }

@@ -97,7 +97,7 @@ export default function Page(): React.JSX.Element {
     return () => {
       newSocket.disconnect();
     };
-  }, []);
+  }, [CURRENT_USER_ID]);
 
   // Fetch contacts
   React.useEffect(() => {
