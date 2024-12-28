@@ -43,9 +43,9 @@ export default function AssignUsersToGroups() {
     try {
       const [usersResponse, groupsResponse] = await Promise.all([
         axios.get(
-          "http://localhost:8000/api/v1/users?role=RANGER&hasNoGroup=true",
+          `${process.env.API_URL}/api/v1/users?role=RANGER&hasNoGroup=true`,
         ),
-        axios.get("http://localhost:8000/api/v1/groups"),
+        axios.get(`${process.env.API_URL}/api/v1/groups`),
       ]);
       setUsers(usersResponse.data.payload.items);
       setGroups(groupsResponse.data.payload.items);

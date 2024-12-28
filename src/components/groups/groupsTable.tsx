@@ -70,7 +70,7 @@ export default function GroupsTable() {
 
   const fetchGroups = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/v1/groups", {
+      const response = await axios.get(`${process.env.API_URL}/api/v1/groups`, {
         params: { page: page + 1, size: rowsPerPage },
         headers: {
           accept: "application/json",
@@ -130,7 +130,7 @@ export default function GroupsTable() {
 
   const handleCreateGroup = async () => {
     try {
-      await axios.post("http://localhost:8000/api/v1/groups", newGroup, {
+      await axios.post(`${process.env.API_URL}/api/v1/groups`, newGroup, {
         headers: {
           "Content-Type": "application/json",
         },

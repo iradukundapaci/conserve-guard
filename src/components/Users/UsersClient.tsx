@@ -82,7 +82,7 @@ export default function UsersPage() {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/v1/users", {
+      const response = await axios.get(`${process.env.API_URL}/api/v1/users`, {
         params: { page: page + 1, size: rowsPerPage },
         headers: {
           accept: "application/json",
@@ -156,7 +156,7 @@ export default function UsersPage() {
 
   const handleCreateUser = async () => {
     try {
-      await axios.post("http://localhost:8000/api/v1/users", newUser, {
+      await axios.post(`${process.env.API_URL}/api/v1/users`, newUser, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${getToken()}`,

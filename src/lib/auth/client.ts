@@ -40,18 +40,21 @@ export interface ResetPasswordParams {
 class AuthClient {
   async signUp(values: SignUpParams): Promise<{ error?: string }> {
     try {
-      const response = await fetch("http://localhost:8000/api/v1/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${process.env.API_URL}/api/v1/auth/signup`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: values.email,
+            password: values.password,
+            role: values.role,
+            names: `${values.firstName} ${values.lastName}`,
+          }),
         },
-        body: JSON.stringify({
-          email: values.email,
-          password: values.password,
-          role: values.role,
-          names: `${values.firstName} ${values.lastName}`,
-        }),
-      });
+      );
 
       const data = await response.json();
 
@@ -75,7 +78,7 @@ class AuthClient {
     const { email, password } = params;
 
     try {
-      const response = await fetch("http://localhost:8000/api/v1/auth/login", {
+      const response = await fetch(`${process.env.API_URL}/api/v1/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -117,7 +120,7 @@ class AuthClient {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/api/v1/users/profile",
+        `${process.env.API_URL}/api/v1/users/profile`,
         {
           method: "GET",
           headers: {
