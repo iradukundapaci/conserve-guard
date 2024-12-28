@@ -1,10 +1,63 @@
-import { useState } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ClickOutside from "@/components/ClickOutside";
+import { useRouter } from "next/navigation"; // Changed from next/router
+import { authClient } from "@/lib/auth/client";
+import { User } from "@/types/user";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        setIsLoading(true);
+        const { data, error } = await authClient.getUser();
+        if (error) {
+          console.error("Error fetching user:", error);
+          router.push("/auth/signin");
+          return;
+        }
+        setUser(data || null);
+      } catch (error) {
+        console.error("Unexpected error:", error);
+        router.push("/auth/signin");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [router]);
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await authClient.signOut();
+      if (error) {
+        console.error("Error signing out:", error);
+        return;
+      }
+      router.push("/auth/signin");
+    } catch (error) {
+      console.error("Unexpected error during logout:", error);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="h-12 w-12 animate-pulse rounded-full bg-gray-200 dark:bg-gray-700" />
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <ClickOutside onClick={() => setDropdownOpen(false)} className="relative">
@@ -28,7 +81,7 @@ const DropdownUser = () => {
         </span>
 
         <span className="flex items-center gap-2 font-medium text-dark dark:text-dark-6">
-          <span className="hidden lg:block">Jhon Smith</span>
+          <span className="hidden lg:block">{user.name || "Unkown User"}</span>
 
           <svg
             className={`fill-current duration-200 ease-in ${dropdownOpen && "rotate-180"}`}
@@ -72,10 +125,10 @@ const DropdownUser = () => {
 
             <span className="block">
               <span className="block font-medium text-dark dark:text-white">
-                Jhon Smith
+                {user.name || "Unkown User"}
               </span>
               <span className="block font-medium text-dark-5 dark:text-dark-6">
-                jonson@nextadmin.com
+                {user.email || "No Email"}
               </span>
             </span>
           </div>
@@ -141,7 +194,10 @@ const DropdownUser = () => {
             </li>
           </ul>
           <div className="p-2.5">
-            <button className="flex w-full items-center gap-2.5 rounded-[7px] p-2.5 text-sm font-medium text-dark-4 duration-300 ease-in-out hover:bg-gray-2 hover:text-dark dark:text-dark-6 dark:hover:bg-dark-3 dark:hover:text-white lg:text-base">
+            <button
+              onClick={handleLogout}
+              className="flex w-full items-center gap-2.5 rounded-[7px] p-2.5 text-sm font-medium text-dark-4 duration-300 ease-in-out hover:bg-gray-2 hover:text-dark dark:text-dark-6 dark:hover:bg-dark-3 dark:hover:text-white lg:text-base"
+            >
               <svg
                 className="fill-current"
                 width="18"

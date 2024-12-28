@@ -55,7 +55,7 @@ class AuthClient {
 
       const data = await response.json();
 
-      if (!response.status === 201) {
+      if (response.status === 201) {
         return { error: data.message || "Signup failed" };
       }
 
@@ -77,7 +77,6 @@ class AuthClient {
     const { email, password } = params;
 
     try {
-      // Make API request to your backend's login endpoint
       const response = await fetch("http://localhost:8000/api/v1/auth/login", {
         method: "POST",
         headers: {
@@ -95,7 +94,6 @@ class AuthClient {
       const { accessToken, refreshToken } = data.payload;
 
       localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
 
       return {};
     } catch (error) {
@@ -113,20 +111,48 @@ class AuthClient {
   }
 
   async getUser(): Promise<{ data?: User | null; error?: string }> {
-    // Make API request
-
-    // We do not handle the API, so just check if we have a token in localStorage.
     const token = localStorage.getItem("accessToken");
 
     if (!token) {
       return { data: null };
     }
 
-    return { data: user };
+    try {
+      const response = await fetch(
+        "http://localhost:8000/api/v1/users/profile",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return { error: errorData.message || "Failed to fetch user profile" };
+      }
+
+      const { payload } = await response.json();
+      const user: User = {
+        id: payload.id,
+        email: payload.email,
+        name: payload.names,
+        role: payload.role,
+        avatar: payload.profileImage || null,
+      };
+      localStorage.setItem("role", payload.role);
+      return { data: user };
+    } catch (error) {
+      return { error: "An error occurred while fetching the user profile" };
+    }
   }
 
   async signOut(): Promise<{ error?: string }> {
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("role");
 
     return {};
   }

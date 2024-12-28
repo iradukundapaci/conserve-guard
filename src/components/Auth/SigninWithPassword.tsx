@@ -60,7 +60,7 @@ export function SigninWithPassword(): React.JSX.Element {
 
       await checkSession?.();
 
-      router.refresh();
+      router.replace("/");
     },
     [checkSession, router, setError],
   );

@@ -2,6 +2,8 @@ import ECommerce from "@/components/Dashboard/E-commerce";
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import React from "react";
+import { UserProvider } from "@/contexts/user-context";
+import { AuthGuard } from "@/components/Auth/auth-guard";
 
 export const metadata: Metadata = {
   title: "Conserve Guard",
@@ -11,7 +13,11 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <DefaultLayout>
-      <ECommerce />
+      <UserProvider>
+        <AuthGuard>
+          <ECommerce />
+        </AuthGuard>
+      </UserProvider>
     </DefaultLayout>
   );
 }

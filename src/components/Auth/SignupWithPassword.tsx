@@ -20,7 +20,6 @@ import { z as zod } from "zod";
 import { authClient } from "@/lib/auth/client";
 import { useUser } from "@/hooks/use-user";
 
-// Define the schema with the "role" field
 const schema = zod.object({
   firstName: zod.string().min(1, { message: "First name is required" }),
   lastName: zod.string().min(1, { message: "Last name is required" }),
@@ -28,7 +27,7 @@ const schema = zod.object({
   password: zod
     .string()
     .min(6, { message: "Password should be at least 6 characters" }),
-  role: zod.enum(["LAWYER", "RANGER", "TOUR GUIDES"], {
+  role: zod.enum(["SENIOR_RANGER", "RANGER"], {
     errorMap: () => ({ message: "Please select a valid role" }),
   }),
 });
@@ -40,7 +39,7 @@ const defaultValues = {
   lastName: "",
   email: "",
   password: "",
-  role: "LAWYER", // Default role
+  role: "RANGER",
 } satisfies Values;
 
 export function SignupWithPassword(): React.JSX.Element {
@@ -68,9 +67,8 @@ export function SignupWithPassword(): React.JSX.Element {
         return;
       }
 
-      // Refresh the auth state
       await checkSession?.();
-      router.refresh();
+      router.replace("/auth/signin");
     },
     [checkSession, router, setError],
   );
