@@ -70,7 +70,7 @@ const AnimalMap: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [mapReady, setMapReady] = useState<boolean>(false);
 
-  const API_BASE_URL = `${process.env.API_URL}/api/v1/animals`;
+  const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/animals`;
 
   useEffect(() => {
     // Add custom styles for the pin icon and tooltip

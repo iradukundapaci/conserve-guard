@@ -41,7 +41,7 @@ class AuthClient {
   async signUp(values: SignUpParams): Promise<{ error?: string }> {
     try {
       const response = await fetch(
-        `${process.env.API_URL}/api/v1/auth/signup`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/signup`,
         {
           method: "POST",
           headers: {
@@ -78,13 +78,16 @@ class AuthClient {
     const { email, password } = params;
 
     try {
-      const response = await fetch(`${process.env.API_URL}/api/v1/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
         },
-        body: JSON.stringify({ email, password }),
-      });
+      );
 
       const data = await response.json();
 
@@ -120,7 +123,7 @@ class AuthClient {
 
     try {
       const response = await fetch(
-        `${process.env.API_URL}/api/v1/users/profile`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/profile`,
         {
           method: "GET",
           headers: {

@@ -44,7 +44,7 @@ const CalendarBox: React.FC = () => {
   const fetchGroups = async (): Promise<void> => {
     try {
       const response = await fetch(
-        `${process.env.API_URL}/api/v1/groups?page=1&size=10`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/groups?page=1&size=10`,
       );
       if (!response.ok) {
         throw new Error("Failed to fetch groups");
@@ -60,7 +60,7 @@ const CalendarBox: React.FC = () => {
   const fetchSchedules = async (): Promise<void> => {
     try {
       const response = await fetch(
-        `${process.env.API_URL}/api/v1/schedule?page=1&size=10`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/schedule?page=1&size=10`,
       );
       if (!response.ok) {
         throw new Error("Failed to fetch schedules");
@@ -123,8 +123,8 @@ const CalendarBox: React.FC = () => {
     setIsSubmitting(true);
 
     const url = isEditing
-      ? `${process.env.API_URL}/api/v1/schedule/${editId}`
-      : `${process.env.API_URL}/api/v1/schedule`;
+      ? `${process.env.NEXT_PUBLIC_API_URL}/api/v1/schedule/${editId}`
+      : `${process.env.NEXT_PUBLIC_API_URL}/api/v1/schedule`;
 
     const method = isEditing ? "PATCH" : "POST";
 

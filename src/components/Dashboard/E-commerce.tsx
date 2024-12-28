@@ -45,7 +45,9 @@ const ECommerce: React.FC = () => {
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
       try {
-        const response = await fetch(`${process.env.API_URL}/api/v1/analytics`);
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/analytics`,
+        );
         const result = await response.json();
         setData(result);
       } catch (error) {

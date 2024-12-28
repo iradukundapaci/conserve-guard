@@ -82,12 +82,15 @@ export default function UsersPage() {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(`${process.env.API_URL}/api/v1/users`, {
-        params: { page: page + 1, size: rowsPerPage },
-        headers: {
-          accept: "application/json",
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users`,
+        {
+          params: { page: page + 1, size: rowsPerPage },
+          headers: {
+            accept: "application/json",
+          },
         },
-      });
+      );
 
       const { items, meta } = response.data.payload;
       const allUsers = items.map((user: any) => ({
@@ -156,12 +159,16 @@ export default function UsersPage() {
 
   const handleCreateUser = async () => {
     try {
-      await axios.post(`${process.env.API_URL}/api/v1/users`, newUser, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`,
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users`,
+        newUser,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getToken()}`,
+          },
         },
-      });
+      );
       setSnackbarMessage("User created successfully!");
       setSnackbarOpen(true);
       handleCloseModal();
@@ -186,7 +193,7 @@ export default function UsersPage() {
   const handleUpdateUser = async () => {
     try {
       await axios.patch(
-        `http://localhost:8000/api/v1/users/${newUser.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/${newUser.id}`,
         {
           names: newUser.names,
           role: newUser.role,
@@ -215,7 +222,7 @@ export default function UsersPage() {
   const confirmDeleteUser = async () => {
     try {
       await axios.delete(
-        `http://localhost:8000/api/v1/users/${userToDelete?.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/${userToDelete?.id}`,
         {
           headers: {
             Authorization: `Bearer ${getToken()}`,

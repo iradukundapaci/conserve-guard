@@ -70,12 +70,15 @@ export default function GroupsTable() {
 
   const fetchGroups = async () => {
     try {
-      const response = await axios.get(`${process.env.API_URL}/api/v1/groups`, {
-        params: { page: page + 1, size: rowsPerPage },
-        headers: {
-          accept: "application/json",
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/groups`,
+        {
+          params: { page: page + 1, size: rowsPerPage },
+          headers: {
+            accept: "application/json",
+          },
         },
-      });
+      );
 
       // Make sure we're accessing the correct structure from the response
       const { items, meta } = response.data.payload;
@@ -130,11 +133,15 @@ export default function GroupsTable() {
 
   const handleCreateGroup = async () => {
     try {
-      await axios.post(`${process.env.API_URL}/api/v1/groups`, newGroup, {
-        headers: {
-          "Content-Type": "application/json",
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/groups`,
+        newGroup,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
       setSnackbarMessage("Group created successfully!");
       setSnackbarOpen(true);
       handleCloseModal();

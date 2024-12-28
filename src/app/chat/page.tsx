@@ -65,7 +65,7 @@ export default function Page(): React.JSX.Element {
   const CURRENT_USER_ID = getCurrentUserId();
 
   React.useEffect(() => {
-    const newSocket = io(`${process.env.API_URL}`, {
+    const newSocket = io(`${process.env.NEXT_PUBLIC_API_URL}`, {
       query: { userId: CURRENT_USER_ID },
     });
 
@@ -104,7 +104,9 @@ export default function Page(): React.JSX.Element {
     const fetchContacts = async () => {
       setState((prev) => ({ ...prev, loading: true, error: null }));
       try {
-        const response = await axios.get(`${process.env.API_URL}/api/v1/users`);
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users`,
+        );
         if (response.data?.payload?.items) {
           setState((prev) => ({
             ...prev,
