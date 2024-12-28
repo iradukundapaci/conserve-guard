@@ -41,7 +41,7 @@ const allMenuGroups: MenuGroup[] = [
           </svg>
         ),
         label: "Location",
-        route: "#",
+        route: "/location",
       },
       {
         icon: (

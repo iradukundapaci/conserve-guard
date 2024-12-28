@@ -39,14 +39,6 @@ export function AuthGuard({
       return;
     }
 
-    if (error || isTokenExpired()) {
-      logger.debug(
-        "[AuthGuard]: Token is expired or invalid, redirecting to sign in",
-      );
-      router.replace("/auth/signin");
-      return;
-    }
-
     if (!user) {
       logger.debug(
         "[AuthGuard]: User is not logged in, redirecting to sign in",
@@ -56,7 +48,7 @@ export function AuthGuard({
     }
 
     setIsChecking(false);
-  }, [user, error, isLoading, router]);
+  }, [user, isLoading, router]);
 
   React.useEffect(() => {
     checkPermissions().catch((e) =>
