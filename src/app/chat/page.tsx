@@ -148,7 +148,7 @@ export default function Page(): React.JSX.Element {
 
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/v1/chat/messages?senderId=${CURRENT_USER_ID}&receiverId=${contact.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/chat/messages?senderId=${CURRENT_USER_ID}&receiverId=${contact.id}`,
       );
 
       setState((prev) => ({

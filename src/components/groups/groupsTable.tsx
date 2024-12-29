@@ -160,7 +160,7 @@ export default function GroupsTable() {
   const handleUpdateGroup = async () => {
     try {
       await axios.patch(
-        `http://localhost:8000/api/v1/groups/${newGroup.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/groups/${newGroup.id}`,
         { name: newGroup.name },
         {
           headers: {
@@ -185,7 +185,7 @@ export default function GroupsTable() {
   const confirmDeleteGroup = async () => {
     try {
       await axios.delete(
-        `http://localhost:8000/api/v1/groups/${groupToDelete?.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/groups/${groupToDelete?.id}`,
       );
       setSnackbarMessage("Group deleted successfully!");
       setSnackbarOpen(true);

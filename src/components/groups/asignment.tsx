@@ -82,7 +82,7 @@ export default function AssignUsersToGroups() {
     try {
       setLoading(true);
       await axios.post(
-        `http://localhost:8000/api/v1/groups/${selectedGroup}/assign-users`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/groups/${selectedGroup}/assign-users`,
         { userIds: selectedUsers },
         { headers: { "Content-Type": "application/json" } },
       );
