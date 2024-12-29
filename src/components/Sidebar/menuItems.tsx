@@ -107,6 +107,20 @@ const allMenuGroups: MenuGroup[] = [
             height="24"
             viewBox="0 0 24 24"
           >
+            <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm-7-9c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 2v3.5l2.25 1.35.75-1.3-1.75-1V13h-1z" />
+          </svg>
+        ),
+        label: "Incidents",
+        route: "/incidents",
+      },
+      {
+        icon: (
+          <svg
+            className="fill-current"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+          >
             <path d="M12 4c-5 0-9 2.69-9 6s4 6 9 6 9-2.69 9-6-4-6-9-6zm0 10c-3.87 0-7-1.69-7-4s3.13-4 7-4 7 1.69 7 4-3.13 4-7 4zm0 4c-4.41 0-8-1.79-8-4v2c0 2.21 3.59 4 8 4s8-1.79 8-4v-2c0 2.21-3.59 4-8 4z" />
           </svg>
         ),

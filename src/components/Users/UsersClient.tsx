@@ -29,16 +29,24 @@ export enum UserRole {
   RANGER = "RANGER",
 }
 
-type User = {
+interface Group {
+  id: number;
+  name: string;
+}
+
+interface User {
   id: number;
   email: string;
   names: string;
   role: UserRole;
+  group: Group | null;
   password?: string;
-};
+  profileImage: string | null;
+}
 
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
+  const [groups, setGroups] = useState<Group[]>([]);
   const [totalUsers, setTotalUsers] = useState<number>(0);
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(5);
@@ -49,7 +57,9 @@ export default function UsersPage() {
     id: 0,
     email: "",
     names: "",
-    role: UserRole.RANGER, // Default role
+    group: null,
+    role: UserRole.RANGER,
+    profileImage: null,
   });
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -62,6 +72,11 @@ export default function UsersPage() {
     { key: "names", label: "Name", render: (row: User) => row.names },
     { key: "email", label: "Email" },
     { key: "role", label: "Role" },
+    {
+      key: "group",
+      label: "Group",
+      render: (row: User) => row.group?.name || "No Group",
+    },
     {
       key: "actions",
       label: "Actions",
@@ -80,6 +95,22 @@ export default function UsersPage() {
 
   const getToken = () => localStorage.getItem("accessToken") || "";
 
+  const fetchGroups = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/groups`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        },
+      );
+      setGroups(response.data.payload.items);
+    } catch (error) {
+      console.error("Failed to fetch groups", error);
+    }
+  };
+
   const fetchUsers = async () => {
     try {
       const response = await axios.get(
@@ -87,20 +118,13 @@ export default function UsersPage() {
         {
           params: { page: page + 1, size: rowsPerPage },
           headers: {
-            accept: "application/json",
+            Authorization: `Bearer ${getToken()}`,
           },
         },
       );
 
       const { items, meta } = response.data.payload;
-      const allUsers = items.map((user: any) => ({
-        id: user.id,
-        email: user.email,
-        names: user.names,
-        role: user.role,
-      }));
-
-      setUsers(allUsers);
+      setUsers(items);
       setTotalUsers(meta.totalItems);
     } catch (error) {
       console.error("Failed to fetch users", error);
@@ -108,6 +132,7 @@ export default function UsersPage() {
   };
 
   useEffect(() => {
+    fetchGroups();
     fetchUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, rowsPerPage]);
@@ -128,7 +153,9 @@ export default function UsersPage() {
       id: 0,
       email: "",
       names: "",
+      group: null,
       role: UserRole.RANGER,
+      profileImage: null,
     });
   };
 
@@ -138,7 +165,9 @@ export default function UsersPage() {
       id: 0,
       email: "",
       names: "",
+      group: null,
       role: UserRole.RANGER,
+      profileImage: null,
     });
   };
 
@@ -157,11 +186,36 @@ export default function UsersPage() {
     }));
   };
 
+  const handleGroupChange = (e: any) => {
+    const selectedGroupId = e.target.value;
+    if (selectedGroupId === "") {
+      setNewUser((prev) => ({
+        ...prev,
+        group: null,
+      }));
+    } else {
+      const selectedGroup = groups.find(
+        (group) => group.id === selectedGroupId,
+      );
+      if (selectedGroup) {
+        setNewUser((prev) => ({
+          ...prev,
+          group: selectedGroup,
+        }));
+      }
+    }
+  };
+
   const handleCreateUser = async () => {
     try {
+      const payload = {
+        ...newUser,
+        groupId: newUser.group?.id || null,
+      };
+
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users`,
-        newUser,
+        payload,
         {
           headers: {
             "Content-Type": "application/json",
@@ -172,32 +226,29 @@ export default function UsersPage() {
       setSnackbarMessage("User created successfully!");
       setSnackbarOpen(true);
       handleCloseModal();
-      fetchUsers(); // Refetch users after creation
+      fetchUsers();
     } catch (error) {
       console.error("Failed to create user", error);
     }
   };
 
   const handleEditUser = (user: User) => {
-    // Only set name and role for editing
-    setNewUser({
-      id: user.id,
-      email: user.email,
-      names: user.names,
-      role: user.role,
-    });
+    setNewUser(user);
     setIsEditMode(true);
     setModalOpen(true);
   };
 
   const handleUpdateUser = async () => {
     try {
+      const payload = {
+        names: newUser.names,
+        role: newUser.role,
+        groupId: newUser.group?.id || null,
+      };
+
       await axios.patch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/${newUser.id}`,
-        {
-          names: newUser.names,
-          role: newUser.role,
-        },
+        payload,
         {
           headers: {
             "Content-Type": "application/json",
@@ -266,6 +317,7 @@ export default function UsersPage() {
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleRowsPerPageChange}
       />
+
       <Dialog open={modalOpen} onClose={handleCloseModal}>
         <DialogTitle>{isEditMode ? "Edit User" : "Create User"}</DialogTitle>
         <DialogContent>
@@ -312,6 +364,21 @@ export default function UsersPage() {
               ))}
             </Select>
           </FormControl>
+          <FormControl fullWidth margin="dense">
+            <InputLabel>Group</InputLabel>
+            <Select
+              value={newUser.group?.id || ""}
+              label="Group"
+              onChange={handleGroupChange}
+            >
+              <MenuItem value="">No Group</MenuItem>
+              {groups.map((group) => (
+                <MenuItem key={group.id} value={group.id}>
+                  {group.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseModal}>Cancel</Button>
@@ -339,6 +406,7 @@ export default function UsersPage() {
           </Button>
         </DialogActions>
       </Dialog>
+
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
