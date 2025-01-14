@@ -1,10 +1,9 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useRef, useEffect, useState } from "react";
 import * as tf from "@tensorflow/tfjs";
 import * as cocossd from "@tensorflow-models/coco-ssd";
+import { useDetection } from "@/contexts/DetectionContext";
 
-// Define types for the model predictions
 interface Detection {
   bbox: [number, number, number, number];
   class: string;
@@ -18,8 +17,10 @@ const ObjectDetection: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isVideoReady, setIsVideoReady] = useState<boolean>(false);
+  const [initialDetectionSent, setInitialDetectionSent] =
+    useState<boolean>(false);
+  const { addDetection } = useDetection();
 
-  // Initialize the model
   useEffect(() => {
     const loadModel = async (): Promise<void> => {
       try {
@@ -38,7 +39,6 @@ const ObjectDetection: React.FC = () => {
     loadModel();
   }, []);
 
-  // Set up video stream
   useEffect(() => {
     const setupCamera = async (): Promise<void> => {
       try {
@@ -52,7 +52,6 @@ const ObjectDetection: React.FC = () => {
 
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
-          // Wait for video to be loaded
           videoRef.current.onloadeddata = () => {
             console.log("Video data loaded");
             setIsVideoReady(true);
@@ -68,7 +67,6 @@ const ObjectDetection: React.FC = () => {
 
     setupCamera();
 
-    // Cleanup function
     return () => {
       const stream = videoRef.current?.srcObject as MediaStream | null;
       if (stream) {
@@ -78,7 +76,6 @@ const ObjectDetection: React.FC = () => {
     };
   }, []);
 
-  // Detect objects in video stream
   useEffect(() => {
     if (!model || !videoRef.current || !isVideoReady) return;
 
@@ -90,22 +87,42 @@ const ObjectDetection: React.FC = () => {
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
 
-      // Set canvas dimensions to match video
       if (video.videoWidth && video.videoHeight) {
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
       }
 
-      // Only run detection when video is playing and has dimensions
       if (video.readyState === 4) {
         try {
-          // Draw video frame first
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-          // Detect objects
           const predictions = await model.detect(video);
 
-          // Draw predictions
+          if (!initialDetectionSent && predictions.length > 0) {
+            predictions.forEach((prediction: Detection) => {
+              if (
+                [
+                  "person",
+                  "cat",
+                  "dog",
+                  "bird",
+                  "horse",
+                  "sheep",
+                  "cow",
+                  "elephant",
+                  "bear",
+                  "zebra",
+                  "giraffe",
+                ].includes(prediction.class)
+              ) {
+              }
+            });
+            setInitialDetectionSent(true);
+            addDetection({
+              class: predictions[0].class,
+              score: predictions[0].score * 100,
+            });
+          }
+
           predictions.forEach((prediction: Detection) => {
             if (
               [
@@ -149,12 +166,11 @@ const ObjectDetection: React.FC = () => {
         }
       }
 
-      // Run detection again on next frame
       requestAnimationFrame(detectObjects);
     };
 
     detectObjects();
-  }, [model, isVideoReady]);
+  }, [model, isVideoReady, addDetection, initialDetectionSent]);
 
   if (loading) {
     return (
