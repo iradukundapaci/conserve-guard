@@ -229,7 +229,7 @@ const CalendarBox: React.FC = () => {
             <option value="">Select Group</option>
             {groups.map((group) => (
               <option key={group.id} value={group.id}>
-                {group.name} ({group.rangersCount} rangers)
+                {group.name}
               </option>
             ))}
           </select>
