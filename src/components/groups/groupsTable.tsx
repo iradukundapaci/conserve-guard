@@ -18,6 +18,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import { DataTable } from "../Tables/Datatable";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { DownloadIcon } from "lucide-react";
 
 type Group = {
   id: number;
@@ -102,6 +105,20 @@ export default function GroupsTable() {
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleDownloadPdf = () => {
+    const doc = new jsPDF();
+    doc.text("Groups Report", 14, 10);
+
+    // AutoTable format
+    autoTable(doc, {
+      startY: 20,
+      head: [["Group Name", "Rangers Count"]],
+      body: groups.map((group) => [group.name, group.rangersCount.toString()]),
+    });
+
+    doc.save("groups-report.pdf");
   };
 
   const handleOpenModal = () => {
@@ -212,6 +229,14 @@ export default function GroupsTable() {
           onClick={handleOpenModal}
         >
           Add Group
+        </Button>
+        <Button
+          startIcon={<DownloadIcon />}
+          variant="contained"
+          color="primary"
+          onClick={handleDownloadPdf}
+        >
+          Download Report
         </Button>
       </Stack>
 

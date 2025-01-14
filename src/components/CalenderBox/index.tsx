@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { generatePDFReport } from "./generateReport";
 
 interface Group {
   id: number;
   name: string;
-  rangersCount: number;
 }
 
 interface Schedule {
@@ -286,6 +286,13 @@ const CalendarBox: React.FC = () => {
         </button>
       </form>
 
+      <button
+        onClick={() => generatePDFReport(schedules)}
+        className="mt-4 w-full rounded-md bg-green-500 px-4 py-2 text-white transition-colors hover:bg-green-600 md:w-auto"
+      >
+        Download PDF Report
+      </button>
+
       <div className="grid grid-cols-1 gap-4 md:grid-cols-7">
         {daysOfWeek.map((day) => (
           <div
@@ -306,8 +313,7 @@ const CalendarBox: React.FC = () => {
                       {schedule.dutyStart} - {schedule.dutyEnd}
                     </p>
                     <p className="text-xs text-gray-600 dark:text-gray-300">
-                      Group: {schedule.group.name} (
-                      {schedule.group.rangersCount} rangers)
+                      Group: {schedule.group.name}
                     </p>
                     <div className="mt-2 flex justify-between space-x-2">
                       <button
